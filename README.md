@@ -62,3 +62,44 @@ It is slow and painful but it does the work, after about a day of runtime or so.
 - Implement -u feature.
 - Add support for working on compressed dump.
 - Add unit test (because why not)
+- Add option to disable or change prefix and suffix
+- Add output formatting:
+  - JSON
+  - CSV
+  - ???
+
+## In the future
+
+Perhaps ading filtering support directly on the program, such as:
+
+```YAML
+filters:
+    - by story:
+        - by tags:
+            - characters
+            - series
+            - warning
+        - lenght:
+            - spesific
+            - flash ( <1k words)
+            - short ( <5k words)
+            - small ( <10k words )
+            - medium ( <10k - 50k words )
+            - long ( >50k words)
+            - custom word count
+        - rating:
+        - popularity
+            - highly rated stories ( >80% rating ) 
+            - poorly rated stories ( <20% rating )
+            - custom
+        - view count
+        - content rating
+        - publication state
+        - completion status
+        - publication date
+        - chapter count
+    - by author:
+        - ammount of stories
+        - word count
+        - creatin date
+```

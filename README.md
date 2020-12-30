@@ -67,6 +67,7 @@ It is slow and painful but it does the work, after about a day of runtime or so.
   - JSON
   - CSV
   - ???
+- add propper error handling and logging instead of just panicing
 
 ## In the future
 

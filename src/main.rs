@@ -58,9 +58,9 @@ fn main() -> std::io::Result<()> {
 
     let mut corpfile = std::fs::OpenOptions::new().write(true).append(true).create(true).open(corppath).unwrap();
 
-    let remxml = regex::Regex::new("<[^>]*>").unwrap();                     // ""
-    let remtrl = regex::Regex::new("([ \t]*$)|([ ]*$)").unwrap();           // " "
-    let relbrk = regex::Regex::new("(\r)|(<p>)|(</p>)|(<br/>)").unwrap();   // "\n"
+    let relbrk = regex::Regex::new("(\r)|(<p>)|(</p>)|(<br/>)").unwrap();   // match things that should be line breaks
+    let remxml = regex::Regex::new("<[^>]*>").unwrap();                     // match XML tags
+    let remtrl = regex::Regex::new("([ \t]*$)|([ ]*$)").unwrap();           // match continuous spaces/tabs
 
     for epub in globwalk::GlobWalkerBuilder::from_patterns(std::fs::canonicalize(arkdir.as_path()).unwrap().as_path(), &["*.epub"]).build().unwrap() {
         println!("procession [{}]", epub.as_ref().unwrap().path().file_name().unwrap().to_str().unwrap());
@@ -78,9 +78,9 @@ fn main() -> std::io::Result<()> {
                 for line in text.lines() {
                     if checkfor(line) { continue }
                     
+                    let line = &relbrk.replace_all(line, "\n");
                     let line = &remxml.replace_all(line, " ");
                     let line = &remtrl.replace_all(line, " ");
-                    let line = &relbrk.replace_all(line, "\n");
 
                     if line.trim().is_empty() { continue }
 

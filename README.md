@@ -20,7 +20,7 @@ Optional arguments:
     -a,--arkdir ARKDIR    Directory directory where the EPUBs are stored,
                           directory hierarchy does not matter.
     -o,--output OUTPUT    Directory where to store the resoulting file.
-    -u,--uniq             NOT IMPLEMENBTED YET; Filter adjacent matching lines
+    -u,--uniq             Filter adjacent matching lines
                           from corpus.
 ```
 
@@ -61,7 +61,6 @@ It is slow and painful but it does the work, after about a day of runtime or so.
 
 ## TODO
 
-- Implement -u feature.
 - Add support for working on compressed dump.
 - Add unit test (because why not)
 - Add option to disable or change prefix and suffix

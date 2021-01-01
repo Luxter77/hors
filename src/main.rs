@@ -35,7 +35,7 @@ fn main() -> std::io::Result<()> {
         ap.refer(&mut overwr).add_option(&["--overwrite"], StoreTrue, "Overwrite existing corpus{es}; Useful when working with limited disk space.");
         ap.refer(&mut arkdir).add_option(&["-a", "--arkdir"], Store, "Directory directory where the EPUBs are stored, directory hierarchy does not matter.");
         ap.refer(&mut copdir).add_option(&["-o", "--output"], Store, "Directory where to store the resoulting file.");
-        ap.refer(&mut uniqqq).add_option(&["-u", "--uniq"], StoreTrue, "NOT IMPLEMENBTED YET; Filter adjacent matching lines from corpus.");
+        ap.refer(&mut uniqqq).add_option(&["-u", "--uniq"], StoreTrue, "Filter adjacent matching lines from corpus.");
         ap.parse_args_or_exit();
     }
 
@@ -63,9 +63,11 @@ fn main() -> std::io::Result<()> {
         println!("now processing: {}", epub.as_ref().unwrap().path().file_name().unwrap().to_str().unwrap());
 
         let f = std::fs::OpenOptions::new().read(true).open(epub.unwrap().path()).unwrap();
+
         let mut inpub = zip::ZipArchive::new(f).unwrap();
+
         let mut text = String::new();
-        let mut _buff = String::new();
+        let mut oldline = String::new();
 
         for i in 0..inpub.len() {
             let mut inzip = inpub.by_index(i).unwrap();
@@ -81,8 +83,16 @@ fn main() -> std::io::Result<()> {
 
                     if line.trim().is_empty() { continue }
 
+                    if uniqqq {
+                        if line.as_ref() == oldline {
+                            continue
+                        } else {
+                            oldline = line.as_ref().to_owned();
+                        }
+                    }
+                    
                     corpfile.write_all(line.as_bytes())?;
-                }
+                    }
                 corpfile.write_all(b"<|endoftext|>\n")?;
             } else {
                 if verbos { println!("File: {} Excluded", inzip.name()); }

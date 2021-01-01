@@ -21,11 +21,7 @@ fn main() -> std::io::Result<()> {
 
     let mut runame: String = String::from("Pony_TxT");
 
-    let mut arkdir: std::path::PathBuf = pwd
-        .join("..")
-        .join("pony")
-        .join("fimfarchive-*")
-        .join("epub");
+    let mut arkdir: std::path::PathBuf = pwd.join("..").join("pony").join("fimfarchive-*").join("epub");
 
     let mut copdir: std::path::PathBuf = pwd.join("..").join("pony").join("corp");
 
@@ -45,7 +41,7 @@ fn main() -> std::io::Result<()> {
 
 
     let mut corppath: std::path::PathBuf = copdir.join(runame.clone());
-    
+
     let _ = std::fs::create_dir_all(&copdir);
 
     if overwr {
@@ -62,14 +58,15 @@ fn main() -> std::io::Result<()> {
     let remxml = regex::Regex::new("<[^>]*>").unwrap();                     // match XML tags
     let remtrl = regex::Regex::new("([ \t]*$)|([ ]*$)").unwrap();           // match continuous spaces/tabs
 
+
     for epub in globwalk::GlobWalkerBuilder::from_patterns(std::fs::canonicalize(arkdir.as_path()).unwrap().as_path(), &["*.epub"]).build().unwrap() {
-        if verbos { println!("procession [{}]", epub.as_ref().unwrap().path().file_name().unwrap().to_str().unwrap()); }
+        if verbos { println!("procession {}", epub.as_ref().unwrap().path().file_name().unwrap().to_str().unwrap()); }
 
         let f = std::fs::OpenOptions::new().read(true).open(epub.unwrap().path()).unwrap();
         let mut inpub = zip::ZipArchive::new(f).unwrap();
         let mut text = String::new();
         let mut _buff = String::new();
-        
+
         for i in 0..inpub.len() {
             let mut inzip = inpub.by_index(i).unwrap();
             if ( inzip.name().starts_with("chapter-") | inzip.name().starts_with("Chapter") ) & inzip.name().ends_with(".html") {
@@ -77,7 +74,7 @@ fn main() -> std::io::Result<()> {
                 corpfile.write_all(b"<|startoftext|>")?;
                 for line in text.lines() {
                     if checkfor(line) { continue }
-                    
+
                     let line = &relbrk.replace_all(line, "\n");
                     let line = &remxml.replace_all(line, " ");
                     let line = &remtrl.replace_all(line, " ");
@@ -95,7 +92,7 @@ fn main() -> std::io::Result<()> {
 
     // Never more
     corpfile.sync_all()?;
-    
+
     return Ok(());
 }
 

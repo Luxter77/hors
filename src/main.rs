@@ -60,7 +60,7 @@ fn main() -> std::io::Result<()> {
 
 
     for epub in globwalk::GlobWalkerBuilder::from_patterns(std::fs::canonicalize(arkdir.as_path()).unwrap().as_path(), &["*.epub"]).build().unwrap() {
-        if verbos { println!("procession {}", epub.as_ref().unwrap().path().file_name().unwrap().to_str().unwrap()); }
+        println!("now processing: {}", epub.as_ref().unwrap().path().file_name().unwrap().to_str().unwrap());
 
         let f = std::fs::OpenOptions::new().read(true).open(epub.unwrap().path()).unwrap();
         let mut inpub = zip::ZipArchive::new(f).unwrap();

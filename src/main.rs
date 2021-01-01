@@ -72,7 +72,7 @@ fn main() -> std::io::Result<()> {
         
         for i in 0..inpub.len() {
             let mut inzip = inpub.by_index(i).unwrap();
-            if inzip.name().starts_with("chapter-") & inzip.name().ends_with(".html") {
+            if ( inzip.name().starts_with("chapter-") | inzip.name().starts_with("Chapter") ) & inzip.name().ends_with(".html") {
                 inzip.read_to_string(&mut text)?;
                 corpfile.write_all(b"<|startoftext|>")?;
                 for line in text.lines() {

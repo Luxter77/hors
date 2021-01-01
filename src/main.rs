@@ -63,7 +63,7 @@ fn main() -> std::io::Result<()> {
     let remtrl = regex::Regex::new("([ \t]*$)|([ ]*$)").unwrap();           // match continuous spaces/tabs
 
     for epub in globwalk::GlobWalkerBuilder::from_patterns(std::fs::canonicalize(arkdir.as_path()).unwrap().as_path(), &["*.epub"]).build().unwrap() {
-        println!("procession [{}]", epub.as_ref().unwrap().path().file_name().unwrap().to_str().unwrap());
+        if verbos { println!("procession [{}]", epub.as_ref().unwrap().path().file_name().unwrap().to_str().unwrap()); }
 
         let f = std::fs::OpenOptions::new().read(true).open(epub.unwrap().path()).unwrap();
         let mut inpub = zip::ZipArchive::new(f).unwrap();
@@ -88,20 +88,13 @@ fn main() -> std::io::Result<()> {
                 }
                 corpfile.write_all(b"<|endoftext|>\n")?;
             } else {
-                println!("File: {} Excluded", inzip.name());
+                if verbos { println!("File: {} Excluded", inzip.name()); }
             }
         }
     }
-    
-
 
     // Never more
     corpfile.sync_all()?;
-
-    if verbos {
-        println!("runame is {}", &runame);
-    }
-    println!("Hello from {}!", &runame);
     
     return Ok(());
 }

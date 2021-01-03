@@ -78,6 +78,7 @@ It is slow and painful but it does the work, after about a day of runtime or so.
   - CSV
   - ???
 - add propper error handling and logging instead of just panicing
+- add a fancy progress bars
 
 ## In the future
 

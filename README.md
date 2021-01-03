@@ -12,16 +12,17 @@ hors [OPTIONS]
 Commit crimes against human kind, just like God intended.
 
 Optional arguments:
-    -h,--help             Show this help message and exit
-    -v,--verbose          Be verbose and slower.
-    -n,--runame RUNAME    Run Name.
-    --overwrite           Overwrite existing corpus{es}; Useful when working with
-                          limited disk space.
-    -a,--arkdir ARKDIR    Directory directory where the EPUBs are stored,
-                          directory hierarchy does not matter.
-    -o,--output OUTPUT    Directory where to store the resoulting file.
-    -u,--uniq             Filter adjacent matching lines
-                          from corpus.
+  -h,--help             Show this help message and exit
+  -a,--arkdir ARKDIR    Directory directory where the EPUBs are stored,
+                        directory hierarchy does not matter.
+  -n,--runame RUNAME    Name of this run.
+  -o,--output OUTPUT    Directory where to store the resoulting file.
+  -v,--verbose          Be verbose and slower.
+  -u,--uniq             Filter adjacent matching lines from corpus.
+  --overwrite           Overwrite existing corpus{es}; Useful when working with
+                        limited disk space.
+  --prefix PREFIX       Prefix to put before each chapter
+  --prefix PREFIX       suffix to put after each chapter
 ```
 
 ## It works on my machine
@@ -34,16 +35,24 @@ On my machine, I have my things stored in such a way that:
 
 ```YAML
 project_folder:
-    - pony: # This project
-        corp:
+    - pony:  # This project
+        - corp:
             - $(runname):
-                - *foo-$(timestamp).txt # Default
-                - $(runname).txt # If overwirte == True
-    - *foo: # Other projects
+                - $(timestamp)-$(runname).txt  # Default
+                - $(runname).txt  # If overwirte == True
+        - archive:  # This is the latest Fimfarchive dump
+            - epub:
+                - *[$(char)]:
+                    - *[$(Author)]:
+                        - *[$(Title)-$(id).epub]
+            - index.json
+            - about.json
+            - readme.pdf
+    - *foo:  # Other projects
         ...
     - tools:
-        - hors.sh # this is the old hors implementation
-        - hors    # ideally, this binary
+        - hors.sh  # this is the old hors implementation
+        - hors     # ideally, this binary
         - some.r
         - other.py
         - tools.sh

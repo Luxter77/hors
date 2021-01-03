@@ -51,7 +51,7 @@ fn main() -> std::io::Result<()> {
     let _ = std::fs::create_dir_all(&copdir).expect("can't create output directory");
 
     if overwr {
-        for old in globwalk::GlobWalkerBuilder::from_patterns(copdir.as_path(), &["*.{txt,lst,npz}"]).follow_links(true).build().expect("I cant remove the files already there") {
+        for old in globwalk::GlobWalkerBuilder::from_patterns(copdir.as_path(), &[[&runame.clone(), ".txt"].concat()]).follow_links(true).build().expect("I cant remove the files already there") {
             std::fs::remove_file(old.unwrap().path())?;
         }
         corppath = copdir.join([runame.clone(), String::from(".txt")].concat());

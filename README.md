@@ -1,5 +1,7 @@
 # Hors
 
+![build state](https://github.com/Luxter77/hors/actions/workflows/build.yml/badge.svg)
+
 Hors is a data procecing tool I made for putting together plain text corpus(es) suitable to be used with neural networks.
 
 This tool is aimed to work with the dumps from [Fimfarchive](https://www.fimfiction.net/user/116950/Fimfarchive) like the tool [Fimfarchive](https://github.com/JockeTF/fimfarchive)

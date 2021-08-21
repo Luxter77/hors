@@ -13,6 +13,7 @@ extern crate zip;
 
 use std::io::prelude::*;
 use alphanumeric_sort::sort_str_slice;
+use std::fs::create_dir_all;
 
 fn main() -> std::io::Result<()> {
     let pwd: std::path::PathBuf = std::env::current_dir().unwrap();
@@ -40,13 +41,15 @@ fn main() -> std::io::Result<()> {
         ap.refer(&mut copdir).add_option(&["-o", "--output"], Store, "Directory where to store the resoulting file.");
         ap.refer(&mut verbos).add_option(&["-v", "--verbose"], StoreTrue, "Be verbose and slower.");
         ap.refer(&mut uniqqq).add_option(&["-u", "--uniq"], StoreTrue, "Filter adjacent matching lines from corpus.");
-        ap.refer(&mut overwr).add_option(&["--overwrite"], StoreTrue, "Overwrite existing corpus{es}; Useful when working with limited disk space.");
+        ap.refer(&mut overwr).add_option(&["--overwrite"], StoreTrue, "Overwrite existing corpus{es}, Useful when working with limited disk space.");
         ap.refer(&mut prefix).add_option(&["--prefix"], Store, "Prefix to put before each chapter");
         ap.refer(&mut suffix).add_option(&["--prefix"], Store, "suffix to put after  each chapter"); // the second space is for sthetic purposes
         ap.parse_args_or_exit();
     }
-    
+
     copdir = copdir.join(runame.clone());
+
+    create_dir_all(copdir.as_os_str()).expect("Can't create output file or directory!");
 
     let _ = std::fs::create_dir_all(&copdir).expect("can't create output directory");
 

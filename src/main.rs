@@ -36,14 +36,14 @@ fn main() -> std::io::Result<()> {
         use argparse::{ArgumentParser, Store, StoreTrue};
         let mut ap: ArgumentParser = ArgumentParser::new();
         ap.set_description("Commit crimes against human kind, just like God intended.");
-        ap.refer(&mut arkdir).add_option(&["-a", "--arkdir"], Store, "Directory directory where the EPUBs are stored, directory hierarchy does not matter.");
+        ap.refer(&mut arkdir).add_option(&["-a", "--arkdir"], Store, "Directory directory where the EPUBs are stored, directory hierarchy do not matter.");
         ap.refer(&mut runame).add_option(&["-n", "--runame"], Store, "Name of this run.");
         ap.refer(&mut copdir).add_option(&["-o", "--output"], Store, "Directory where to store the resoulting file.");
         ap.refer(&mut verbos).add_option(&["-v", "--verbose"], StoreTrue, "Be verbose and slower.");
         ap.refer(&mut uniqqq).add_option(&["-u", "--uniq"], StoreTrue, "Filter adjacent matching lines from corpus.");
         ap.refer(&mut overwr).add_option(&["--overwrite"], StoreTrue, "Overwrite existing corpus{es}, Useful when working with limited disk space.");
         ap.refer(&mut prefix).add_option(&["--prefix"], Store, "Prefix to put before each chapter");
-        ap.refer(&mut suffix).add_option(&["--prefix"], Store, "suffix to put after  each chapter"); // the second space is for sthetic purposes
+        ap.refer(&mut suffix).add_option(&["--suffix"], Store, "suffix to put after  each chapter"); // the second space is for sthetic purposes
         ap.parse_args_or_exit();
     }
 

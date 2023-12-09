@@ -24,7 +24,7 @@ Optional arguments:
   --overwrite           Overwrite existing corpus{es}; Useful when working with
                         limited disk space.
   --prefix PREFIX       Prefix to put before each chapter
-  --prefix PREFIX       suffix to put after each chapter
+  --suffix PREFIX       suffix to put after each chapter
 ```
 
 ## It works on my machine

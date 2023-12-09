@@ -5,17 +5,27 @@
 //  I don't want you to get it on
 //  With nobody else but me
 
-extern crate alphanumeric_sort;
-extern crate argparse;
-extern crate globwalk;
-extern crate regex;
-extern crate zip;
+use alphanumeric_sort;
+use argparse;
+use globwalk;
+use regex;
+use zip;
 
-use std::io::prelude::*;
 use alphanumeric_sort::sort_str_slice;
-use std::fs::create_dir_all;
+use zip::ZipArchive;
+use color_eyre;
+
+use std::{
+    fs::create_dir_all,
+    io::{
+        Read,
+        Write
+    },
+};
 
 fn main() -> std::io::Result<()> {
+    let _ = color_eyre::install();
+    
     let pwd: std::path::PathBuf = std::env::current_dir().unwrap();
 
     let mut verbos: bool = false;
@@ -71,29 +81,28 @@ fn main() -> std::io::Result<()> {
         println!("creating output file {}", corppath.to_str().expect("invalid characters on file name"));
     }
 
-    let mut corpfile = std::fs::OpenOptions::new().create(true).write(true).append(true).open(corppath).expect("can't create output file");
+    let mut corpfile: std::fs::File = std::fs::OpenOptions::new().create(true).write(true).append(true).open(corppath).expect("can't create output file");
 
-    let relbrk = regex::Regex::new("(\r)|(<p>)|(</p>)|(<br/>)").unwrap();   // match things that should be line breaks
-    let remxml = regex::Regex::new("<[^>]*>").unwrap();                     // match XML tags
-    let remtrl = regex::Regex::new("([ \t]*$)|([ ]*$)").unwrap();           // match continuous spaces/tabs
+    let relbrk: regex::Regex = regex::Regex::new("(\r)|(<p>)|(</p>)|(<br/>)").unwrap();   // match things that should be line breaks
+    let remxml: regex::Regex = regex::Regex::new("<[^>]*>").unwrap();                     // match XML tags
+    let remtrl: regex::Regex = regex::Regex::new("([ \t]*$)|([ ]*$)").unwrap();           // match continuous spaces/tabs
 
     if verbos { println!("walking down {}", arkdir.to_str().expect("invalid path")); }
     
-
     for epub in globwalk::GlobWalkerBuilder::from_patterns(std::fs::canonicalize(arkdir.as_path()).expect("can't open arkdir").as_path(), &["*.epub"]).build().unwrap() {
         println!("now processing: {}", epub.as_ref().unwrap().path().file_name().unwrap().to_str().unwrap());
 
-        let f = std::fs::OpenOptions::new().read(true).open(epub.unwrap().path()).expect("can't open file!");
+        let f: std::fs::File = std::fs::OpenOptions::new().read(true).open(epub.unwrap().path()).expect("can't open file!");
 
-        let mut inpub = zip::ZipArchive::new(f).unwrap();
+        let mut inpub: ZipArchive<std::fs::File> = zip::ZipArchive::new(f).unwrap();
 
-        let mut text = String::new();
-        let mut oldline = String::new();
+        let mut text:    String = String::new();
+        let mut oldline: String = String::new();
 
         let mut infiles: Vec<String> = Vec::new();
 
         for i in 0..inpub.len() {
-            let inzip = inpub.by_index(i).expect("can't open one of the archives");
+            let inzip: zip::read::ZipFile<'_> = inpub.by_index(i).expect("can't open one of the archives");
             if ( inzip.name().starts_with("chapter-") | inzip.name().starts_with("Chapter") ) & inzip.name().ends_with(".html") {
                 if verbos {
                     println!("included: {}", inzip.name())
@@ -116,11 +125,11 @@ fn main() -> std::io::Result<()> {
             for line in text.lines() {
                 if checkfor(line) { continue }
 
-                let line = &relbrk.replace_all(line, "\n");
-                let line = &remxml.replace_all(line, " ");
-                let line = &remtrl.replace_all(line, " ");
+                let line: &std::borrow::Cow<'_, str> = &relbrk.replace_all(line, "\n");
+                let line: &std::borrow::Cow<'_, str> = &remxml.replace_all(line, " ") ;
+                let line: &std::borrow::Cow<'_, str> = &remtrl.replace_all(line, " ") ;
 
-                if line.trim().is_empty() { continue }
+                if line.trim().is_empty() { continue };
 
                 if uniqqq {
                     if line.as_ref() == oldline {

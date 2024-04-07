@@ -238,6 +238,7 @@ fn main() {
             if verbos {
                 println!("processiong {}", inname);
             }
+            text.clear();
             let _ = inzip.read_to_string(&mut text);
             let _ = corpfile.write_all(prefix.as_bytes());
             for line in text.lines() {

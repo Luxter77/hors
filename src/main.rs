@@ -131,17 +131,10 @@ fn main() {
     } else {
         corppath = copdir.join(
             [
-                std::time::SystemTime::now()
-                    .duration_since(std::time::UNIX_EPOCH)
-                    .expect("no tachionic time allowed, sorry")
-                    .as_secs()
-                    .to_string(),
+                std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).expect("no tachionic time allowed, sorry").as_secs().to_string(),
                 String::from("-"),
                 runame.clone(),
-                String::from(match usegzp {
-                    0 => ".txt",
-                    _ => ".txt.gz",
-                }),
+                String::from(match usegzp { 0 => ".txt", _ => ".txt.gz" }),
             ]
             .concat(),
         );
@@ -155,12 +148,7 @@ fn main() {
     }
 
     let mut corpfile: CompressibleFile = CompressibleFile::new(
-        std::fs::OpenOptions::new()
-            .create(true)
-            .write(true)
-            .append(true)
-            .open(corppath)
-            .expect("can't create output file"),
+        std::fs::OpenOptions::new().create(true).write(true).append(true).open(corppath).expect("can't create output file"),
     );
 
     if usegzp != 0 {
@@ -178,25 +166,8 @@ fn main() {
 
     let mut cnt: u8 = 0;
 
-    for epub in globwalk::GlobWalkerBuilder::from_patterns(
-        std::fs::canonicalize(arkdir.as_path())
-            .expect("can't open arkdir")
-            .as_path(),
-        &["*.epub"],
-    )
-    .build()
-    .unwrap()
-    {
-        println!(
-            "now processing: {}",
-            epub.as_ref()
-                .unwrap()
-                .path()
-                .file_name()
-                .unwrap()
-                .to_str()
-                .unwrap()
-        );
+    for epub in globwalk::GlobWalkerBuilder::from_patterns(std::fs::canonicalize(arkdir.as_path()).expect("can't open arkdir").as_path(), &["*.epub"]).build().unwrap() {
+        println!("now processing: {}", epub.as_ref().unwrap().path().file_name().unwrap().to_str().unwrap());
 
         let f: std::fs::File = std::fs::OpenOptions::new()
             .read(true)
@@ -232,19 +203,13 @@ fn main() {
         cnt += 1;
 
         for inname in infiles {
-            let mut inzip = inpub
-                .by_name(&inname)
-                .expect("can't open one of the archives");
-            if verbos {
-                println!("processiong {}", inname);
-            }
+            let mut inzip = inpub.by_name(&inname).expect("can't open one of the archives");
+            if verbos { println!("processiong {}", inname) };
             text.clear();
             let _ = inzip.read_to_string(&mut text);
             let _ = corpfile.write_all(prefix.as_bytes());
             for line in text.lines() {
-                if checkfor(line) {
-                    continue;
-                }
+                if checkfor(line) { continue };
 
                 let line: &std::borrow::Cow<'_, str> = &relbrk.replace_all(line, "\n");
                 let line: &std::borrow::Cow<'_, str> = &remxml.replace_all(line, " ");
@@ -268,9 +233,7 @@ fn main() {
             let _ = corpfile.write_all(suffix.as_bytes());
             
             if cnt > 10 {
-                if verbos {
-                    println!("flishing...");
-                }
+                if verbos { println!("flishing...") };
                 let _ = corpfile.flush();
                 cnt = 0;
             };
@@ -283,9 +246,7 @@ fn checkfor(line: &str) -> bool {
         return true;
     }
     
-    if regex::Regex::new("<h1>Author's Note</h1>")
-        .unwrap()
-        .is_match(line) {
+    if regex::Regex::new("<h1>Author's Note</h1>").unwrap().is_match(line) {
         return true;
     }
     
